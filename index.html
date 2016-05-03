@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<title>Flickr Searcher</title>
+		<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" type = "text/css" href = "styles.css"/>
 		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>	
@@ -15,24 +16,24 @@
 				<h1>Flickr Searcher</h1>
 				
 				<div id = "searchBarDiv">
-					<input id = "searchInput" type = "text" placeholder = "Enter a tag to search for" ng-model = "vm.keyword"/>
-					<input id = "submitBtn" type = "button" value = "Submit" ng-click = "vm.searchFlickr()"/>
+					<input id = "searchInput" type = "text" placeholder = "Enter a keyword to search for images" ng-model = "vm.keyword"/>
+					<input id = "submitBtn" type = "button" value = "Search" ng-click = "vm.searchFlickr()"/>
 				</div>
 
 				<!-- ng-if during search time and upon results found -->
-<!-- 				<div>
-					<p>Searching Instagram for photoes tagged with ""</p>
+				<div id = "searchingDiv" ng-if = "vm.searching">
+					<p ng-bind-template = "Searching Flickr for photos tagged with {{vm.keyword}}"></p>
 				</div>
-				<div>
-					<p>We found "" results for ""</p>
-				</div> -->
 
-				<div ng-if = "vm.results" ng-repeat = "result in vm.results">
-					<img ng-src = "{{vm.trustResource(result.farm, result.server, result.id, result.secret)}}" width= "100px" height = "100px"/>
+				<div id = "outerResults" ng-if = "vm.results">
+					<h3 ng-bind-template = "We found {{vm.results.length}} results for {{vm.keyword}}"></h3>
+					<div ng-repeat = "result in vm.results">
+						<img ng-src = "{{vm.trustResource(result.farm, result.server, result.id, result.secret)}}" width= "100px" height = "100px"/>
+					</div>					
 				</div>
-<!-- 				<div ng-if = "vm.results.length > 0">
-					<p>Hello World!</p>
-				</div> -->
+
+			
+				
 			</form>
 		</div>	
 	<body>

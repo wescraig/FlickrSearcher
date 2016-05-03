@@ -3,23 +3,34 @@ angular.module('flickrApp', [])
 .config(function($httpProvider){
 	$httpProvider.defaults.useXDomain = true;
 })
-.controller('PictureSearchCntrl', function($http, $sce){
+.controller('PictureSearchCntrl', function($http, $sce, $q, $timeout){
 	
-	this.keyword = '';
-	this.results = [];
+	var vm = this;
+
+	vm.keyword = '';
+	vm.searching = false;
 	
-	this.trustResource = function(farm, server, id, secret){
+	vm.trustResource = function(farm, server, id, secret){
 		//console.log('https://farm' + farm + '.staticflickr.com/' + server + '/'+ id +'_'+ secret + '.jpg');
 		return $sce.trustAsResourceUrl('https://farm' + farm + '.staticflickr.com/' + server + '/'+ id +'_'+ secret + '.jpg');
 	};	
 
-	this.searchFlickr = function(){
+	var wait = function(response){
+		return $q(function(resolve, reject){
+			vm.searching = true;
+			$timeout(function(){
+				resolve(response);
+			}, 2000);
+		});
+	}
+
+	vm.searchFlickr = function(){
 		var embedUrl = "https://api.flickr.com/services/rest";
 
 		var params = {
 			method: 'flickr.photos.search',
 			api_key: "cd668ffc67cbb10ea00d43046c2f2e13",
-			tags: this.keyword,
+			tags: vm.keyword,
 			format: 'json',
 			nojsoncallback: 1
 		}
@@ -30,17 +41,17 @@ angular.module('flickrApp', [])
 			params:params
 		})
 		.then(function(response){
-
-			// for(var i = 0; i < response.data.photos.photo.length; i++){
-			// 	this.results.push(response.data.photos.photo[i]);	
-			// }
-			this.results = response.data.photos.photo;
-			//console.log(this.results);
+			wait(response).then(function(){
+				vm.searching = false;
+				vm.results = response.data.photos.photo;	
+			});
+			
 		},
 		function(response){
 			alert('Search error.');
 			//post logic for ng-if for results div.
 		});
-	};	
+	};
+
 
 });

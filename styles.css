@@ -1,3 +1,13 @@
+@keyframes fadeIn{
+	from{opacity: 0;}
+	to{opacity: 1;}
+}
+
+@keyframes fadeOut{
+	from{opacity: 1;}
+	to{opacity: 0;}
+}
+
 body{
 	margin: 0;
 	padding: 0;
@@ -35,7 +45,7 @@ h1{
 #submitBtn{
     display: block;
     margin: 0 auto;
-     font-size: 1.15em;
+    font-size: 1.15em;
     width: 94px;
     height: 34px;	
     border-radius: 5%;
@@ -43,8 +53,80 @@ h1{
     border: none;
     background: linear-gradient(#99ddff, #0077b3);
     outline: none;
+    -webkit-transition: color 500ms linear;
+
 }
 
 #submitBtn:hover{
 	cursor: pointer;
+	color: orange;
 }
+
+#submitBtn:active{
+	background: linear-gradient(#0077b3, #99ddff);
+}
+
+#innerResults{
+	-moz-column-count: 3;
+	-moz-column-gap: 10px;
+	-webkit-column-count: 3;
+	-webkit-column-gap: 10px;
+	column-count: 3;
+	column-gap: 10px;
+}
+
+.mainImage{
+    border: 1px solid white;
+    border-radius: 100%;
+    margin-bottom: 20px;
+}
+
+.searchImage{
+	overflow: hidden;
+}
+
+.searchImage.ng-enter, .searchImage.ng-leave{
+	transition: all linear 3.0s;
+}
+
+.searchImage.ng-enter,
+.searchImage.ng-leave.ng-leave-active{
+	opacity: 0;
+	max-height: 0;
+}
+
+.searchImage.ng-leave,
+.searchImage.ng-enter.ng-enter-active{
+	opacity: 1;
+	max-height: 1em;
+}
+
+#errorMsg{
+	background: maroon;
+    color: white;
+    padding: 5px;
+    margin-top: 1px;
+    margin-bottom: 2%;
+    font-size: 12px;
+    border-radius: 5px;
+    position: relative;
+    animation: fadeIn ease-in 0.6s;
+}
+
+#errorMsg:after, #errorMsg:before{
+	bottom: 100%;
+	left: 65%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+#errorMsg:after{
+	border-bottom-color: maroon;
+	border-width: 6px;
+	margin-left: -80px;
+}
+

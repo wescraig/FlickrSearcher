@@ -3,32 +3,39 @@
 	<head>
 		<title>Flickr Searcher</title>
 		<link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-		<link rel="stylesheet" type = "text/css" href = "styles.css"/>
 		<script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
 		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>	
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.js"></script>
 		<script src="https://code.angularjs.org/1.4.9/angular-messages.js"></script>
+		<script data-require="angular-animate@*" data-semver="1.4.9" src="https://code.angularjs.org/1.4.9/angular-animate.js"></script>
+		<link rel="stylesheet" type = "text/css" href = "styles.css"/>
 		<script src = "controllers.js" type = "text/javascript"></script>
 	</head>
 	<body ng-app = "flickrApp">
 		<div id = "searchPanel" ng-controller = "PictureSearchCntrl as vm">
-			<form name = "flickrAppForm" novalidate>
+			<form name = "flickrAppForm" novalidate ng-submit = "vm.searchFlickr(flickrAppForm)">
 				<h1>Flickr Searcher</h1>
 				
 				<div id = "searchBarDiv">
-					<input id = "searchInput" type = "text" placeholder = "Enter a keyword to search for images" ng-model = "vm.keyword"/>
-					<input id = "submitBtn" type = "button" value = "Search" ng-click = "vm.searchFlickr()"/>
+					<input id = "searchInput" type = "text" name = "keyword" placeholder = "Enter a keyword to search for images" ng-model = "vm.keyword" required/>
+					<div id = "errorMsg" ng-if = "vm.interacted(flickrAppForm, flickrAppForm.keyword)" ng-messages = "flickrAppForm.keyword.$error">
+						<span ng-message = "required">We can't search for nothing! Enter a keyword to search Flickr.</span>
+					</div>
+					<input id = "submitBtn" type = "submit" value = "Search"/>
 				</div>
 
 				<!-- ng-if during search time and upon results found -->
-				<div id = "searchingDiv" ng-if = "vm.searching">
+				<div id = "searchingDiv" ng-if = "vm.searching && flickrAppForm.keyword.$valid">
 					<p ng-bind-template = "Searching Flickr for photos tagged with {{vm.keyword}}"></p>
 				</div>
 
-				<div id = "outerResults" ng-if = "vm.results">
-					<h3 ng-bind-template = "We found {{vm.results.length}} results for {{vm.keyword}}"></h3>
-					<div ng-repeat = "result in vm.results">
-						<img ng-src = "{{vm.trustResource(result.farm, result.server, result.id, result.secret)}}" width= "100px" height = "100px"/>
+				<div id = "outerResults" ng-if = "vm.results && !vm.inSearch">
+					<h3 ng-bind-template = "We found {{vm.results.length}} results for {{vm.keywordHolder}}"></h3>
+
+					<div id = "innerResults">
+						<div ng-repeat = "result in vm.results" class = "searchImage">
+							<img ng-src = "{{vm.trustResource(result.farm, result.server, result.id, result.secret)}}" class = "mainImage" width= "200px" height = "200px"/>
+						</div>
 					</div>					
 				</div>
 

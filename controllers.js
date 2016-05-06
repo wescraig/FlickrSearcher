@@ -9,6 +9,10 @@ angular.module('flickrApp', [])
 
 	vm.keyword = '';
 	vm.searching = false;
+	vm.keywordHolder = '';
+	vm.inSearch = false;
+	vm.notClicked = true;
+
 	
 	vm.trustResource = function(farm, server, id, secret){
 		//console.log('https://farm' + farm + '.staticflickr.com/' + server + '/'+ id +'_'+ secret + '.jpg');
@@ -17,14 +21,29 @@ angular.module('flickrApp', [])
 
 	var wait = function(response){
 		return $q(function(resolve, reject){
+			if(!vm.keyword){
+				return;
+			}
 			vm.searching = true;
+			vm.notClicked = true;
 			$timeout(function(){
 				resolve(response);
 			}, 2000);
 		});
 	}
 
-	vm.searchFlickr = function(){
+	vm.interacted = function(form, field){
+		if(form.$dirty && !vm.keyword && vm.notClicked){
+			return false;
+		}
+		return form.$submitted && !field.$valid;
+	}
+
+	vm.searchFlickr = function(form){
+		vm.notClicked = false;
+		vm.inSearch = true;
+		vm.keywordHolder = vm.keyword;
+
 		var embedUrl = "https://api.flickr.com/services/rest";
 
 		var params = {
@@ -42,7 +61,12 @@ angular.module('flickrApp', [])
 		})
 		.then(function(response){
 			wait(response).then(function(){
+
+				if(!response.data.photos.photo){
+					vm.inSearch = true;	
+				}
 				vm.searching = false;
+				vm.inSearch = false;
 				vm.results = response.data.photos.photo;	
 			});
 			
